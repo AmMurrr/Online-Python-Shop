@@ -1,0 +1,6 @@
+__pycache__/
+.venv/
+*.csv
+main (1).py
+dml.sql
+__init__.py
