@@ -26,12 +26,9 @@ class ProductBase(BaseModel):
         return v
 
     discount_percentage: float
-    rating: float
     stock: int
     brand: str
-    thumbnail: str
     images: List[str]
-    is_published: bool
     created_at: datetime
     category_id: int
     category: CategoryBase

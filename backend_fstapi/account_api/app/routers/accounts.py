@@ -15,21 +15,23 @@ auth_scheme = HTTPBearer()
 
 @router.get("/", response_model=AccountOut)
 def get_my_info(
+        user_id: int,
         db: Session = Depends(get_db),
-        token: HTTPAuthorizationCredentials = Depends(auth_scheme)):
-    return AccountService.get_my_info(db, token)
+        ):
+    return AccountService.get_my_info(db, user_id)
 
 
-@router.put("/", response_model=AccountOut)
-def edit_my_info(
-        updated_user: AccountUpdate,
-        db: Session = Depends(get_db),
-        token: HTTPAuthorizationCredentials = Depends(auth_scheme)):
-    return AccountService.edit_my_info(db, token, updated_user)
+# @router.put("/", response_model=AccountOut)
+# def edit_my_info(
+#         updated_user: AccountUpdate,
+#         db: Session = Depends(get_db),
+#         token: HTTPAuthorizationCredentials = Depends(auth_scheme)):
+#     return AccountService.edit_my_info(db, token, updated_user)
 
 
 @router.delete("/", response_model=AccountOut)
 def remove_my_account(
+        user_id: int,
         db: Session = Depends(get_db),
-        token: HTTPAuthorizationCredentials = Depends(auth_scheme)):
-    return AccountService.remove_my_account(db, token)
+       ):
+    return AccountService.remove_my_account(db, user_id)

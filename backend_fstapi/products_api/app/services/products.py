@@ -6,10 +6,9 @@ from app.utils.responses import ResponseHandler
 
 class ProductService:
     @staticmethod
-    def get_all_products(db: Session, page: int, limit: int, search: str = ""):
-        products = db.query(Product).order_by(Product.id.asc()).filter(
-            Product.title.contains(search)).limit(limit).offset((page - 1) * limit).all()
-        return {"message": f"Page {page} with {limit} products", "data": products}
+    def get_all_products(db: Session):
+        products = db.query(Product).order_by(Product.id.asc()).all()
+        return {"message": f"All products", "data": products}
 
     @staticmethod
     def get_product(db: Session, product_id: int):

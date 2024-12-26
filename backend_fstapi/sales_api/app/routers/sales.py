@@ -3,7 +3,7 @@ from app.core.database import get_db
 from app.services.sales import SaleService
 from sqlalchemy.orm import Session
 from app.schemas.sales import SaleCreate, SalesOut,SaleOut, SaleOutDelete
-from app.core.security import check_admin_role
+# from app.core.security import check_admin_role
 
 
 router = APIRouter(tags=["Sales"], prefix="/sales")
@@ -18,9 +18,6 @@ router = APIRouter(tags=["Sales"], prefix="/sales")
     response_model=SalesOut)
 def get_all_sales(
     db: Session = Depends(get_db),
-    # page: int = Query(1, ge=1, description="Page number"),
-    # limit: int = Query(10, ge=1, le=100, description="Items per page"),
-    # search: str | None = Query("", description="Search based username"),
 ):
     return SaleService.get_all_sales(db)
 
@@ -30,8 +27,7 @@ def get_all_sales(
 @router.post(
     "/",
     status_code=status.HTTP_201_CREATED,
-    response_model=SaleOut,
-    dependencies=[Depends(check_admin_role)])
+    response_model=SaleOut)
 def create_user(sale: SaleCreate, db: Session = Depends(get_db)):
     return SaleService.create_sale(db, sale)
 
@@ -40,7 +36,6 @@ def create_user(sale: SaleCreate, db: Session = Depends(get_db)):
 @router.delete(
     "/{sale_id}",
     status_code=status.HTTP_200_OK,
-    response_model=SaleOutDelete,
-    dependencies=[Depends(check_admin_role)])
+    response_model=SaleOutDelete)
 def delete_user(sale_id: int, db: Session = Depends(get_db)):
-    return SaleService.delete_user(db, sale_id)
+    return SaleService.delete_sale(db, sale_id)

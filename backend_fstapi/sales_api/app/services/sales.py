@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app.models.models import Sales, Sales_details
+from app.models.models import Sales, Sales_details, Product
 from app.schemas.sales import SaleCreate
 from app.utils.responses import ResponseHandler
 # from app.core.security import get_password_hash

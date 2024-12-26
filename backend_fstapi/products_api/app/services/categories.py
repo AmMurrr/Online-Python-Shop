@@ -6,10 +6,9 @@ from app.utils.responses import ResponseHandler
 
 class CategoryService:
     @staticmethod
-    def get_all_categories(db: Session, page: int, limit: int, search: str = ""):
-        categories = db.query(Category).order_by(Category.id.asc()).filter(
-            Category.name.contains(search)).limit(limit).offset((page - 1) * limit).all()
-        return {"message": f"Page {page} with {limit} categories", "data": categories}
+    def get_all_categories(db: Session):
+        categories = db.query(Category).order_by(Category.id.asc()).all()
+        return {"message": f"All categories", "data": categories}
 
     @staticmethod
     def get_category(db: Session, category_id: int):
