@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Query, status
 from app.core.database import get_db
 from app.services.recommendations import RecService
 from sqlalchemy.orm import Session
-# from app.schemas.carts import RecOut
+from app.schemas.recommendations import ItemBase #RecOut
 from fastapi.security import HTTPBearer
 from fastapi.security.http import HTTPAuthorizationCredentials
 
@@ -17,3 +17,13 @@ def get_cart(
         db: Session = Depends(get_db)
 ):
     return RecService.get_recommendation( db,item_name)
+
+
+@router.post("/", status_code=status.HTTP_200_OK)
+def add_item(
+        
+        item_name: str,
+        item_category: str,
+        db: Session = Depends(get_db)
+):
+        return RecService.add_item(db,item_name,item_category)

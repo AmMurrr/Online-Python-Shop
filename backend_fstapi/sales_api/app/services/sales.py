@@ -1,52 +1,57 @@
 from sqlalchemy.orm import Session
-from app.models.models import User
-from app.schemas.users import UserCreate, UserUpdate
+from app.models.models import Sales, Sales_details
+from app.schemas.sales import SaleCreate
 from app.utils.responses import ResponseHandler
-from app.core.security import get_password_hash
+# from app.core.security import get_password_hash
 
 
-class UserService:
+class SaleService:
     @staticmethod
-    def get_all_users(db: Session, page: int, limit: int, search: str = "", role: str = "user"):
-        users = db.query(User).order_by(User.id.asc()).filter(
-            User.username.contains(search), User.role == role).limit(limit).offset((page - 1) * limit).all()
-        return {"message": f"Page {page} with {limit} users", "data": users}
+    def get_all_sales(db: Session):
+        sales = db.query(Sales).order_by(Sales.id.asc()).all()
+        return {"message": f"All Sales:", "data": sales}
 
-    @staticmethod
-    def get_user(db: Session, user_id: int):
-        user = db.query(User).filter(User.id == user_id).first()
-        if not user:
-            ResponseHandler.not_found_error("User", user_id)
-        return ResponseHandler.get_single_success(user.username, user_id, user)
 
     @staticmethod
-    def create_user(db: Session, user: UserCreate):
-        hashed_password = get_password_hash(user.password)
-        user.password = hashed_password
-        db_user = User(id=None, **user.model_dump())
-        db.add(db_user)
+    def create_sale(db: Session, sale: SaleCreate):
+
+        sale_dict = sale.model_dump()
+        sale_user = sale_dict.pop("user_id")
+        total_cost = sale_dict.pop("total_cost")
+        sale_items_data = sale_dict.pop("sale_items", [])
+
+        sale_db = Sales(total_cost=total_cost, user_id=sale_user)
+        db.add(sale_db)
         db.commit()
-        db.refresh(db_user)
-        return ResponseHandler.create_success(db_user.username, db_user.id, db_user)
+        db.refresh(sale_db)
+
+        sale_id = sale_db.id
+
+        
+        for item_data in sale_items_data:
+            product_id = item_data['product_id']
+            sale_amount = item_data['sale_amount']
+
+            product = db.query(Product).filter(Product.id == product_id).first()
+            if not product:
+                return ResponseHandler.not_found_error("Product", product_id)
+
+           
+            sale_item = Sales_details(product_id=product_id, sale_amount=sale_amount)
+
+            details_db = Sales_details(sale_id=sale_id, product_id=product_id, sale_amount=sale_amount)
+            db.add(details_db)
+            db.commit()
+            db.refresh(details_db)
+
+        return ResponseHandler.create_success("Sale", sale_db.id, sale_db)
+
 
     @staticmethod
-    def update_user(db: Session, user_id: int, updated_user: UserUpdate):
-        db_user = db.query(User).filter(User.id == user_id).first()
-        if not db_user:
-            ResponseHandler.not_found_error("User", user_id)
-
-        for key, value in updated_user.model_dump().items():
-            setattr(db_user, key, value)
-
+    def delete_sale(db: Session, sale_id: int):
+        db_sale = db.query(Sales).filter(Sales.id == sale_id).first()
+        if not db_sale:
+            ResponseHandler.not_found_error("Sale", sale_id)
+        db.delete(db_sale)
         db.commit()
-        db.refresh(db_user)
-        return ResponseHandler.update_success(db_user.username, db_user.id, db_user)
-
-    @staticmethod
-    def delete_user(db: Session, user_id: int):
-        db_user = db.query(User).filter(User.id == user_id).first()
-        if not db_user:
-            ResponseHandler.not_found_error("User", user_id)
-        db.delete(db_user)
-        db.commit()
-        return ResponseHandler.delete_success(db_user.username, db_user.id, db_user)
+        return ResponseHandler.delete_success(db_sale.id, db_sale)
