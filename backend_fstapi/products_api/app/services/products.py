@@ -7,7 +7,7 @@ from app.utils.responses import ResponseHandler
 class ProductService:
     @staticmethod
     def get_all_products(db: Session):
-        products = db.query(Product).order_by(Product.id.asc()).all()
+        products = db.query(Product).order_by(Product.id.desc()).all()
         return {"message": f"All products", "data": products}
 
     @staticmethod

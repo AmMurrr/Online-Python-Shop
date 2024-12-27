@@ -38,7 +38,9 @@ conn.commit()
 with file_path_2.open(newline='', encoding='utf-8') as f:
     reader = csv.reader(f, delimiter=',')
     next(reader)
+    
     for row in reader:
+        
         cur.execute("""
             INSERT INTO categories (item_category_name)
             VALUES (%s)
@@ -50,7 +52,11 @@ conn.commit()
 with file_path_1.open(newline='', encoding='utf-8') as f:
     reader = csv.reader(f, delimiter=',')
     next(reader)
+    k =0
     for row in reader:
+        k += 1
+        if k == 10000:
+            break
         cur.execute("""
             INSERT INTO items (item_name, item_category_id)
             VALUES (%s, %s)

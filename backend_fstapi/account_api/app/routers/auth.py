@@ -16,7 +16,7 @@ async def user_login(
     return await AuthService.signup(db, user)
 
 
-@router.post("/login", status_code=status.HTTP_200_OK)
+@router.post("/login", status_code=status.HTTP_200_OK,response_model=UserOut)
 def user_login(
         username: str,
         password:str,

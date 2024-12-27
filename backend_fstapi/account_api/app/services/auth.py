@@ -9,7 +9,7 @@ from app.utils.responses import ResponseHandler
 from app.schemas.auth import Signup
 
 
-# oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
 
 
 class AuthService:
@@ -22,7 +22,7 @@ class AuthService:
         if not verify_password(password, user.password):
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Credentials")
 
-        return ResponseHandler.get_single_success(user.username, user.id, user.id)
+        return ResponseHandler.get_single_success(user.username, user.id, user)
 
     @staticmethod
     async def signup(db: Session, user: Signup):

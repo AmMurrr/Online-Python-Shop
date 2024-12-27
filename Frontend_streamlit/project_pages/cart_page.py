@@ -1,11 +1,12 @@
-# import streamlit as st 
-# import repositories.cart
+import streamlit as st 
+import repositories.cart
 # from services.sales import SaleService
-# from datetime import date
+from datetime import date
+from repositories.cart import *
 # from repositories.media import get_image
 
-# import logging
-# import log_config
+import logging
+import log_config
 
 # @st.cache_data
 # def find_product_by_id(product_id,products):
@@ -14,9 +15,12 @@
 #             return product
 #     return None
 
-# def get_cart_products():
-#     logging.info(f"Получаем товары в корзине пользователя {st.session_state.logged_in}")
-#     return repositories.cart.get_cart_products(st.session_state.logged_in)
+def get_cart_products():
+    logging.info(f"Получаем товары в корзине пользователя {st.session_state.logged_in}")
+    cart_products = repositories.cart.get_cart_products(st.session_state.logged_in)
+    if not cart_products:
+        cart_create(st.session_state.logged_in)
+    return cart_products
 
 # def cart_clearing():
 #     logging.info(f"Чистка корзины пользователя {st.session_state.logged_in}")
@@ -59,82 +63,82 @@
 #     if st.button("Закрыть"):
 #         st.rerun()
 
-# def show_cart_page():
-#     st.title("🛒 Корзина товаров")
-#     total_cost = 0
+def show_cart_page():
+    st.title("🛒 Корзина товаров")
+    total_cost = 0
 
-#     # Получаем данные о товарах в корзине
-#     cart_products = get_cart_products()
+    # Получаем данные о товарах в корзине
+    cart_products = get_cart_products()
 
-#     if not cart_products:
-#         st.write("Ваша корзина пуста.")
-#         return
+    if not cart_products:
+        st.write("Ваша корзина пуста.")
+        return
 
-#     # Отображаем товары в корзине
-#     for item in cart_products:
-#         with st.container(border=True):
-#             product_id = item["product_id"]
-#             amount = item["amount"]
-#             product = find_product_by_id(product_id,st.session_state.products)
-#             if not product:
-#                 st.warning(f"Товар с ID {product_id} не найден в каталоге")
-#                 continue
+    # Отображаем товары в корзине
+    for item in cart_products:
+        with st.container(border=True):
+            product_id = item["product_id"]
+            amount = item["amount"]
+            product = find_product_by_id(product_id,st.session_state.products)
+            if not product:
+                st.warning(f"Товар с ID {product_id} не найден в каталоге")
+                continue
 
-#             product_name = product["product_name"]
-#             cost = product["cost"]
-#             stored_amount = product["amount"]
-#             product_image = get_product_image(product_id)
+            product_name = product["product_name"]
+            cost = product["cost"]
+            stored_amount = product["amount"]
+            product_image = get_product_image(product_id)
 
-#             total_cost += cost * amount
+            total_cost += cost * amount
 
-#             col1, col2, col3 = st.columns([1, 3, 1])
+            col1, col2, col3 = st.columns([1, 3, 1])
 
-#             with col1:
-#                 # Загружаем и отображаем изображение товара
-#                 if product_image:
-#                     st.image(product_image)
-#                 else:
-#                     st.warning("Изображение не найдено")
+            with col1:
+                # Загружаем и отображаем изображение товара
+                if product_image:
+                    st.image(product_image)
+                else:
+                    st.warning("Изображение не найдено")
 
-#             with col2:
-#                 # Информация о товаре
-#                 st.subheader(product_name)
-#                 st.write(f"Цена: {cost} ₽")
-#                 st.write(f"Количество: {amount}")
+            with col2:
+                # Информация о товаре
+                st.subheader(product_name)
+                st.write(f"Цена: {cost} ₽")
+                st.write(f"Количество: {amount}")
 
 
-#                 # Кнопки для изменения количества
-#                 if st.button("➖ Уменьшить", key=f"decrease-{product_id}"):
-#                     if amount > 1:
-#                         update_cart_product( product_id, -1)
-#                     else:
-#                         update_cart_product( product_id, 0) 
-#                     st.rerun()
+                # Кнопки для изменения количества
+                if st.button("➖ Уменьшить", key=f"decrease-{product_id}"):
+                    if amount > 1:
+                        update_cart_product( product_id, -1)
+                    else:
+                        update_cart_product( product_id, 0) 
+                    st.rerun()
 
-#                 if st.button("➕ Увеличить", key=f"increase-{product_id}"):
-#                     if stored_amount - amount > 0:
-#                         update_cart_product( product_id, 1)
-#                         st.rerun()
-#                     else:
-#                         st.warning("Превышено число товара на складе")
+                if st.button("➕ Увеличить", key=f"increase-{product_id}"):
+                    if stored_amount - amount > 0:
+                        update_cart_product( product_id, 1)
+                        st.rerun()
+                    else:
+                        st.warning("Превышено число товара на складе")
 
-#             with col3:
-#                 # Кнопка удаления товара
-#                 if st.button("❌ Удалить", key=f"delete-{product_id}"):
-#                     update_cart_product( product_id, 0)
-#                     st.rerun()
+            with col3:
+                # Кнопка удаления товара
+                if st.button("❌ Удалить", key=f"delete-{product_id}"):
+                    update_cart_product( product_id, 0)
+                    st.rerun()
 
-#     # Общая стоимость корзины
-#     st.write(f"### Общая стоимость: {total_cost} ₽")
-#     sale_btn = st.button("Купить")
-#     # оформелние? 
-#     if sale_btn:
-#         logging.info("Инициализация покупки")
-#         sale_id = create_sale(cart_products,total_cost)
-#         if sale_id != -1: 
-#             cart_clearing()
-#             logging.info(f"Покупка {sale_id} прошла успешно!")
-#             success_sale(sale_id)
-#         else:
-#             logging.info("Покупка не прошла")
-#             st.warning("Проблемы с оформлением покупки. Пожалуйста попробуйте позже.")
+    # Общая стоимость корзины
+    st.write(f"### Общая стоимость: {total_cost} ₽")
+    sale_btn = st.button("Купить")
+    # оформелние? 
+    if sale_btn:
+        logging.info("Инициализация покупки")
+        sale_id = create_sale(cart_products,total_cost)
+        if sale_id != -1: 
+            cart_clearing()
+            logging.info(f"Покупка {sale_id} прошла успешно!")
+            success_sale(sale_id)
+        else:
+            logging.info("Покупка не прошла")
+            st.warning("Проблемы с оформлением покупки. Пожалуйста попробуйте позже.")

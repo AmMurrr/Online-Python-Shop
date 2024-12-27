@@ -80,3 +80,30 @@ class Product(Base):
 
     # Relationship with cart items
     cart_items = relationship("CartItem", back_populates="product")
+
+
+class Sales(Base):
+    __tablename__ = "sales"
+
+    id = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
+    sale_date = Column(TIMESTAMP(timezone=True), server_default=text("NOW()"), nullable=False)
+    total_cost = Column(Float, nullable=False)
+
+    # Relationship with user
+    user_id = Column(Integer, ForeignKey("users.id",ondelete="SET NULL"), nullable=True)
+    user = relationship("User", back_populates="sale")
+
+    sale_detail = relationship("Sales_details", back_populates="sale")
+
+
+class Sales_details(Base):
+    __tablename__ = "sales_details"
+
+    id = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
+    sale_id = Column(Integer,ForeignKey("sales.id",ondelete="CASCADE"), nullable=False)
+    sale = relationship("Sales", back_populates="sale_detail")
+
+    product_id = Column(Integer,ForeignKey("products.id",ondelete="SET NULL"), nullable=True)
+    product = relationship("Product", back_populates="sale_detail")
+
+    amount = Column(Integer, nullable=False)

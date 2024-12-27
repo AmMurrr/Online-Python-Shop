@@ -19,7 +19,7 @@ def get_all_carts(
 
 
 # Get Cart By User ID
-@router.get("/{cart_id}", status_code=status.HTTP_200_OK, response_model=CartOut)
+@router.get("/{user_id}", status_code=status.HTTP_200_OK, response_model=CartOut)
 def get_cart(
         # cart_id: int,
         user_id: int,
@@ -38,7 +38,7 @@ def create_cart(
 
 
 # Update Existing Cart
-@router.put("/{cart_id}", status_code=status.HTTP_200_OK, response_model=CartOut)
+@router.put("/{user_id}", status_code=status.HTTP_200_OK, response_model=CartOut)
 def update_cart(
         user_id: int,
         updated_cart: CartUpdate,
@@ -48,7 +48,7 @@ def update_cart(
 
 
 # Delete Cart By User ID
-@router.delete("/{cart_id}", status_code=status.HTTP_200_OK, response_model=CartOutDelete)
+@router.delete("/", status_code=status.HTTP_200_OK, response_model=CartOutDelete)
 def delete_cart(
        user_id: int, db: Session = Depends(get_db),
         ):
