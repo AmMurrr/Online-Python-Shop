@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from app.models.models import Sales, Sales_details, Product
-from app.schemas.sales import SaleCreate
+from app.schemas.sales import SaleCreate,SalesOut
 from app.utils.responses import ResponseHandler
 # from app.core.security import get_password_hash
 
@@ -54,4 +54,4 @@ class SaleService:
             ResponseHandler.not_found_error("Sale", sale_id)
         db.delete(db_sale)
         db.commit()
-        return ResponseHandler.delete_success(db_sale.id, db_sale)
+        return ResponseHandler.delete_success(db_sale.id,db_sale.id, db_sale)

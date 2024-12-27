@@ -14,8 +14,7 @@ router = APIRouter(tags=["Sales"], prefix="/sales")
 # Get All Sales
 @router.get(
     "/",
-    status_code=status.HTTP_200_OK,
-    response_model=SalesOut)
+    status_code=status.HTTP_200_OK)
 def get_all_sales(
     db: Session = Depends(get_db),
 ):
@@ -26,8 +25,7 @@ def get_all_sales(
 # Create New Sale
 @router.post(
     "/",
-    status_code=status.HTTP_201_CREATED,
-    response_model=SaleOut)
+    status_code=status.HTTP_201_CREATED)
 def create_user(sale: SaleCreate, db: Session = Depends(get_db)):
     return SaleService.create_sale(db, sale)
 
@@ -35,7 +33,6 @@ def create_user(sale: SaleCreate, db: Session = Depends(get_db)):
 # Delete Sale By ID
 @router.delete(
     "/{sale_id}",
-    status_code=status.HTTP_200_OK,
-    response_model=SaleOutDelete)
+    status_code=status.HTTP_200_OK)
 def delete_user(sale_id: int, db: Session = Depends(get_db)):
     return SaleService.delete_sale(db, sale_id)
