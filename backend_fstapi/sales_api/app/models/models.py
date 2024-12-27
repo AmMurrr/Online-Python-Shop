@@ -108,4 +108,4 @@ class Sales_details(Base):
     product_id = Column(Integer,ForeignKey("products.id",ondelete="SET NULL"), nullable=True)
     product = relationship("Product", back_populates="sale_detail")
 
-    amount = Column(Integer, nullable=False)
+    sale_amount = Column(Integer, nullable=False)

@@ -18,8 +18,9 @@ class User(Base):
     # New column for role
     role = Column(Enum("admin", "user", name="user_roles"), nullable=False, server_default="user")
 
-    # Relationship with carts
     carts = relationship("Cart", back_populates="user")
+
+    sale = relationship("Sales", back_populates="user")
 
 
 class Cart(Base):
@@ -30,7 +31,6 @@ class Cart(Base):
     created_at = Column(TIMESTAMP(timezone=True), server_default=text("NOW()"), nullable=False)
     total_amount = Column(Float, nullable=False)
 
-    # Relationship with user
     user = relationship("User", back_populates="carts")
 
     # Relationship with cart items
@@ -78,5 +78,34 @@ class Product(Base):
     category_id = Column(Integer, ForeignKey("categories.id", ondelete="CASCADE"), nullable=False)
     category = relationship("Category", back_populates="products")
 
-    # Relationship with cart items
+
     cart_items = relationship("CartItem", back_populates="product")
+
+    sale_detail = relationship("Sales_details", back_populates="product")
+
+
+class Sales(Base):
+    __tablename__ = "sales"
+
+    id = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
+    sale_date = Column(TIMESTAMP(timezone=True), server_default=text("NOW()"), nullable=False)
+    total_cost = Column(Float, nullable=False)
+
+    # Relationship with user
+    user_id = Column(Integer, ForeignKey("users.id",ondelete="SET NULL"), nullable=True)
+    user = relationship("User", back_populates="sale")
+
+    sale_detail = relationship("Sales_details", back_populates="sale")
+
+
+class Sales_details(Base):
+    __tablename__ = "sales_details"
+
+    id = Column(Integer, primary_key=True, nullable=False, unique=True, autoincrement=True)
+    sale_id = Column(Integer,ForeignKey("sales.id",ondelete="CASCADE"), nullable=False)
+    sale = relationship("Sales", back_populates="sale_detail")
+
+    product_id = Column(Integer,ForeignKey("products.id",ondelete="SET NULL"), nullable=True)
+    product = relationship("Product", back_populates="sale_detail")
+
+    sale_amount = Column(Integer, nullable=False)
