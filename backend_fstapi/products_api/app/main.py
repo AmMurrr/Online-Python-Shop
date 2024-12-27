@@ -3,18 +3,7 @@ from fastapi import FastAPI
 
 
 description = """
-- **Crud**
-	- Create, Read, Update, and Delete endpoints.
-- **Search**
-	- Find specific information with parameters and pagination.
-- **Auth**
-	- Verify user/system identity.
-	- Secure with Access and Refresh tokens.
-- **Permission**
-	- Assign roles with specific permissions.
-	- Different access levels for User/Admin.
-- **Validation**
-	- Ensure accurate and secure input data.
+-
 
 
 """

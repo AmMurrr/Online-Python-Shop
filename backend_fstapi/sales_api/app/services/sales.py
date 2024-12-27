@@ -54,4 +54,4 @@ class SaleService:
             ResponseHandler.not_found_error("Sale", sale_id)
         db.delete(db_sale)
         db.commit()
-        return ResponseHandler.delete_success(db_sale.id,db_sale.id, db_sale)
+        return ResponseHandler.delete_success(db_sale.id, db_sale)
